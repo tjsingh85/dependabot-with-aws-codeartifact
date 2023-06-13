@@ -3,7 +3,7 @@ registries:
   codeartifact:
     type: npm-registry
     url: https://<domain>-<account>.d.codeartifact.<region>.amazonaws.com
-    token: ${{secrets.YOUR_DEPENDABOT_TOKEN_NAME}}
+    token: ${{secrets.DEPENDABOT_TOKEN}}
 updates:
  - package-ecosystem: "npm"
    directory: "/"
