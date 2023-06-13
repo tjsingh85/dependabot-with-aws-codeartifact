@@ -1,0 +1,30 @@
+name: Update AWS CodeArtifact Token
+
+on:
+  schedule:
+    - cron: 0 */11 * * *
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      # GH token with admin access
+      GH_TOKEN: ${{ secrets.GH_ADMIN_ACCESS_TOKEN_FOR_UPDATING_SECRETS }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@5727f247b64f324ec403ac56ae05e220fd02b65f
+        with:
+          aws-region: <AWS_REGION>
+          role-to-assume: arn:aws:iam::<ACCOUNT_NUMBER>:role/<ROLE_NAME>
+          
+      - name: Get token and update secret
+        run: |
+          export AWS_CODEARTIFACT_TOKEN=`aws codeartifact get-authorization-token --domain <my_domain> --domain-owner <account_number> --region <aws_region>  --query authorizationToken --output text`
+          gh secret set WHATEVER_SECRECT_NAME_YOU_WANT --org <my_org> --visibility all --app dependabot --body "$AWS_CODEARTIFACT_TOKEN"
