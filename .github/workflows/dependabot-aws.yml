@@ -2,7 +2,8 @@ name: Update AWS CodeArtifact Token
 
 on:
   schedule:
-    - cron: 0 */11 * * *
+    # runs every weekly to match dependabot run, configure according to your preference 
+    - cron: 5 8 * * 0
   workflow_dispatch:
 
 jobs:
@@ -26,4 +27,4 @@ jobs:
       - name: Get token and update secret
         run: |
           export AWS_CODEARTIFACT_TOKEN=`aws codeartifact get-authorization-token --domain <my_domain> --domain-owner <account_number> --region <aws_region>  --query authorizationToken --output text`
-          gh secret set SECRECT_NAME_YOU_USED_IN_DEPENDABOT.YML --org <my_org> --visibility all --app dependabot --body "$AWS_CODEARTIFACT_TOKEN"
+          gh secret set DEPENDABOT_TOKEN --org <my_org> --visibility all --app dependabot --body "$AWS_CODEARTIFACT_TOKEN"
